@@ -29,32 +29,43 @@ var maxCoins = function(nums) {
     var val = copy.splice(i, 1);
     tree.children.push(new Node(copy, left * val * right));
   }
-  console.log(tree);
 
 
 
 
-  var buildTree = (node) => {
-    if (node.nums.length === 1) {
-      return;
-    } else {
-      // node.children.forEach(childNode => {
-      for (var i = 0; i < node.children.length; i++) {
-        var copy = nums.slice();
-        // var left = nums[i - 1] || 1;
-        // var right = nums[i + 1] || 1;
-        var val = copy.splice(i, 1);
-        node.children[i].children.push(new Node(copy, ((nums[i - 1] || 1) * val * (nums[i + 1] || 1)) + node.children[i].sum));
+
+  var buildTree = () => {
+    var memo = {};
+
+    function f(node) {
+
+      var args = JSON.stringify(node);
+      var result;
+
+      if (memo[args]) {
+        result = memo[args];
+      } else {
+        if (!node.nums.length) {
+          result = 1;
+        } else {
+          node.children.forEach(childNode => {
+            var copy = nums.slice();
+            var val = copy.splice(i, 1);
+            memo[JSON.stringify(childNode)] = result = new Node(copy, ((nums[i - 1] || 1) * val * (nums[i + 1] || 1)) + node.childNode.sum);
+            childNode.children.push(result);
+            result = f(childNode);
+          });
+        }
       }
-        for (var k = 0; k < )
-        buildTree(node.children[i])
-
+      return result;
     }
-
+    return f;
   };
-  buildTree(tree);
 
+  console.log(buildTree(tree));
+  // console.log(res);
+  console.log(tree);
 };
 
 
-maxCoins([3, 1, 5])
+maxCoins([3, 1, 5, 8])
