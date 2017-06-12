@@ -59,7 +59,20 @@ var trap = function(array) {
 };
 
 var testTrap1 = [0,1,0,2,1,0,1,3,2,1,2,1]
-console.log(trap(bigAray))
+// console.log(trap(bigAray))
+var matrixInput = [0, 1, 2, 3, 4]
+var matrix = [
+  [0, 0, 0, 0, 1],
+  [0, 0, 0, 1, 1],
+  [0, 0, 1, 1, 1],
+  [0, 1, 1, 1, 1]
+]
 
-// (var i = 1; i < array.length - 1; i++)
+
+var buildMatrix = (array) => {
+  var matrix = [];
+  for (var i = 0; i < array.length; i++) {
+
+  }
+}
 

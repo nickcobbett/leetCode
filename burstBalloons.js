@@ -19,53 +19,53 @@ var Node = function(nums, sum) {
   this.children = [];
 };
 
-var maxCoins = function(nums) {
-  // initialize tree
-  var tree = new Tree(nums);
-  for (var i = 0; i < nums.length; i++) {
-    var copy = nums.slice();
-    var left = nums[i - 1] || 1;
-    var right = nums[i + 1] || 1;
-    var val = copy.splice(i, 1);
-    tree.children.push(new Node(copy, left * val * right));
-  }
+var memoize = (func) => {
+  var memo = {};
+  var slice = Array.prototype.slice;
 
+  var f = (x, n) => {
 
+    var args = slice.call(arguments);
+    memo[x] = memo[x] || {};
 
+    if (x in memo && n in memo[x]) {
+      return memo[x][n];
+    } else {
+      return (memo[x][n] = func.apply(this, args));
+    }
 
+  };
+  return f;
+}
 
-  var buildTree = () => {
-    var memo = {};
+var maxCoins = function(array) {
+  // break up array into individual units with for loop
+  // var sum = 0;
+  var sums = [];
 
-    function f(node) {
+  var summer = (array, sum) => {
+    if (array.length === 1) {
+      sum += array[0];
+      sums.push(sum);
+    } else {
+      for (var i = 0; i < array.length; i++) {
+        var sumForOneVal = 0
+        var copy = array.slice();
+        var left = array[i - 1] || 1;
+        var right = array[i + 1] || 1;
+        var lastCoin = copy.splice(i, 1)[0];
+        for (var k = 0; k < copy.length; k++) {
+          // var sumForTwoVals =
 
-      var args = JSON.stringify(node);
-      var result;
-
-      if (memo[args]) {
-        result = memo[args];
-      } else {
-        if (!node.nums.length) {
-          result = 1;
-        } else {
-          node.children.forEach(childNode => {
-            var copy = nums.slice();
-            var val = copy.splice(i, 1);
-            memo[JSON.stringify(childNode)] = result = new Node(copy, ((nums[i - 1] || 1) * val * (nums[i + 1] || 1)) + node.childNode.sum);
-            childNode.children.push(result);
-            result = f(childNode);
-          });
         }
       }
-      return result;
     }
-    return f;
   };
-
-  console.log(buildTree(tree));
-  // console.log(res);
-  console.log(tree);
+  summer(array, 0);
+  return sums;
+  // for each el add its sum to sum of next elemen
 };
 
-
-maxCoins([3, 1, 5, 8])
+var memoMax = memoize(maxCoins);
+var max = memoMax([3, 1, 5, 8]);
+console.log(max);
