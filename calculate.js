@@ -59,7 +59,7 @@
 
 var calculate = (s) => {
   s = s.replace(/\s/g, '');
-  // var pemdas = ['*', '/', '+', '-'];
+
   const doMath = (a, b, operator) => {
     if (typeof a === 'string') a = parseInt(a);
     if (typeof b === 'string') b = parseInt(b);
@@ -69,51 +69,39 @@ var calculate = (s) => {
     else return a - b;
   }
 
-  var nums = s.replace(/[-\*\+\/]/g, '  ').split(' ');
-  var opsFiltered = s.replace(/[0-9]/g, '').split(''); /*replace(/[0-9]/g, '')*/
+  var _nums = s.replace(/[-\*\+\/]/g, ' ').split(' ');
+  var _ops = s.replace(/[0-9]/g,  '').split('');
+  var nums = [];
+  var ops = [];
+  for (var i = 0; i < _ops.length; i++) {
+    ops.push('');
+    ops.push(_ops[i]);
+  }
 
-  var ops = nums.map(char => {
-    if (!isNaN(parseInt(char))) {
-      return '';
-    } else {
-      return opsFiltered.shift();
-    }
-  })
+  for (var k = 0; k < _nums.length; k++) {
+    nums.push(_nums[k]);
+    nums.push('');
+  }
+  ops.push(nums.pop());
   // console.log('nums', nums)
-  // console.log('ops', ops)
+  // console.log('ops ', ops)
+
   while (nums.length > 1) {
+    for (var i = 0; i < ops.length - 1; i++) {
+      if (ops[i] === '*' || ops[i] === '/') {
+        nums.splice(i - 1, 3, doMath(nums[i - 1], nums[i + 1], ops[i]))
+        ops.splice(i - 1, 2)
+      }
+      // console.log(nums)
+    }
 
-    // pemdas.forEach(operator => {
-      ops.forEach((char, i) => {
-        if (char === '*' || char === '/') {
-          var a = nums[i - 1];
-          var b = nums[i + 1];
-          var res = doMath(a, b, char);
-          // console.log('a', a)
-          // console.log('b', b)
-          // console.log('res', res)
-          nums.splice(i - 1, 3, res);
-          ops.splice(i - 1, 2)
-          // console.log('nums', nums)
-          // console.log('ops', ops)
-        }
-      })
-
-      ops.forEach((char, i) => {
-        if (char === '+' || char === '-') {
-          var a = nums[i - 1];
-          var b = nums[i + 1];
-          var res = doMath(a, b, char);
-          // console.log('a', a)
-          // console.log('b', b)
-          // console.log('res', res)
-          nums.splice(i - 1, 3, res);
-          ops.splice(i - 1, 2)
-          console.log('nums', nums)
-          // console.log('ops', ops)
-        }
-      })
-    // })
+   for (var i = 0; i < ops.length - 1; i++) {
+      if (ops[i] === '+' || ops[i] === '-') {
+        nums.splice(i - 1, 3, doMath(nums[i - 1], nums[i + 1], ops[i]))
+        ops.splice(i - 1, 2)
+      }
+      console.log(nums)
+    }
   }
 
   console.log('result: ', parseInt(nums.join('')));
