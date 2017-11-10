@@ -3,36 +3,72 @@
  * @return {number}
  */
 
-// Given a string, find the length of the longest substring without repeating characters.
+
   // hash table
   // two pointers
 
 var lengthOfLongestSubstring = function(s) {
-  var maxStr = '';
-  var maxCount = 0;
-  for (var i = 0; i < s.length; i++) {
-    var subStr = '';
+  if (!s) return 0;
+  var maxStr = s[0];
+  var maxCount = 1;
+  var allSubs = {};
+
+  var i = 0;
+  while (i < s.length) {
     var subObj = {};
     var count = 0;
-    for (var j = i; j < s.length; j++) {
-      var char = s[j];
-      if (!subObj[char]) {
-        subObj[char] = 1;
-        subStr += char;
+
+    var subStr = '';
+
+    var rightIndex = i + 1;
+    var leftIndex = i;
+    var keepSearching = true;
+    while ((rightIndex < s.length || leftIndex >= 0) && keepSearching && !allSubs[subStr]) {
+      // console.log(leftIndex, rightIndex)
+
+      keepSearching = false;
+      var rightChar = s[rightIndex];
+      var leftChar = s[leftIndex];
+
+      while (leftChar && !subObj[leftChar]) { // build left
+        // console.log('left', leftChar)
+        subObj[leftChar] = 1;
+        subStr = leftChar.concat(subStr);
         count++;
-      } else {
-        break;
+        leftIndex--;
+        leftChar = s[leftIndex];
+        keepSearching = true;
       }
+
+      while (rightChar && !subObj[rightChar]) { // build right
+      // console.log('rightChar', rightChar)
+        subObj[rightChar] = 1;
+        subStr += rightChar;
+        count++;
+        rightIndex++;
+        keepSearching = true;
+      }
+
+      allSubs[subStr] = 1
+      // console.log('subStr', subStr);
     }
+
     if (count > maxCount) {
       maxCount = count;
       maxStr = subStr;
     }
+
+    i = rightIndex;
+    // console.log(i)
   }
-  // console.log('result: ', maxStr);
+  // console.log('maxStr and maxCount', [maxStr, maxCount]);
   return maxCount;
 };
 
-console.log(lengthOfLongestSubstring('abcabcbb') === 3); // 'abc'
-console.log(lengthOfLongestSubstring('bbbbb') === 1); // 'b'
-console.log(lengthOfLongestSubstring('pwwkew') === 3); // 'wke'
+// console.log(lengthOfLongestSubstring("bziuwnklhqzrxnb") === 11) // 'iuwnklhqzrx'
+// console.log(lengthOfLongestSubstring('jbpnbwwd') === 4) // 'jbnp'
+// console.log(lengthOfLongestSubstring('abcabcbb') === 3); // 'abc'
+// console.log(lengthOfLongestSubstring('bbbbb') === 1); // 'b'
+// console.log(lengthOfLongestSubstring('pwwkew') === 3); // 'wke'
+console.log(lengthOfLongestSubstring('dvdf') === 3); // 'vdf'
+console.log(lengthOfLongestSubstring('ohvhjdml') === 6); // 'vhjdml'
