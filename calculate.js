@@ -20,14 +20,12 @@ class Queue {
     } else {
       this.tail.next = node;
       this.tail = node;
-
     }
     this.count++;
   }
 
   pop() {
     var tmp = this.head;
-
     this.head = this.head.next;
     this.count--;
     return tmp.value;
@@ -58,7 +56,7 @@ var calculate = (s) => {
     else return a - b;
   }
 
-  var nums = s.split(/[-\*\+\/]/g)
+  var nums = s.split(/[-\*\+\/]/g);
   var ops = s.split(/[0-9]/g).filter(char => char);
   var exp = [];
   for (var i = 0; i < nums.length; i++) {
@@ -67,7 +65,6 @@ var calculate = (s) => {
       exp.push(ops[i]);
     }
   }
-
 
   var numsQue = new Queue();
   var opsQue = new Queue();
@@ -92,28 +89,25 @@ var calculate = (s) => {
   var a = numsQue.pop();
   var b = numsQue.pop();
 
-
   while (!numsQue.isEmpty()) {
     a = doMath(a, b, opsQue.pop());
     b = numsQue.pop();
   }
 
   a = doMath(a, b, opsQue.pop());
-  return a;
 
+  return a;
 };
 
-// console.log(calculate(" 3/2 ") === 1);
-// console.log(calculate("14/3*2") === 8)
-// console.log(calculate('42') === 42)
-
-
-// console.log(calculate("3+2*2") === 7);
-// console.log(calculate(" 3+5 / 2 ") === 5);
-// console.log(calculate("12-3*4") === 0);
-// console.log(calculate('1 + 1') === 2);
-// console.log(calculate('2 + 6 / 3') === 4)
-// console.log(calculate('0-2147483647') === -2147483647)
-// console.log(calculate('1+1+1') === 3)
-// console.log(calculate('1-1+1') === 1)
-// console.log(calculate("100-1-2-3-4-5-6-7-8-9-10") === 45)
+console.log(calculate(" 3/2 ") === 1);
+console.log(calculate("14/3*2") === 8)
+console.log(calculate('42') === 42);
+console.log(calculate("3+2*2") === 7);
+console.log(calculate(" 3+5 / 2 ") === 5);
+console.log(calculate("12-3*4") === 0);
+console.log(calculate('1 + 1') === 2);
+console.log(calculate('2 + 6 / 3') === 4)
+console.log(calculate('0-2147483647') === -2147483647);
+console.log(calculate('1+1+1') === 3);
+console.log(calculate('1-1+1') === 1);
+console.log(calculate("100-1-2-3-4-5-6-7-8-9-10") === 45);
