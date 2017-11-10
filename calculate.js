@@ -1,61 +1,50 @@
-// class Queue {
-//   constructor() {
-//     this.storage = [];
-//   }
+class Node {
+  constructor(val) {
+    this.value = val;
+    this.next = null;
+  }
+}
 
-//   push(val) {
-//     this.storage.unshift(val);
-//   }
+class Queue {
+  constructor() {
+    this.head = null;
+    this.tail = null;
+    this.count = 0;
+  }
 
-//   pop() {
-//     return this.storage.pop();
-//   }
+  push(val) {
+    var node = new Node(val);
+    if (!this.head && !this.tail) {
+      this.head = node;
+      this.tail = node;
+    } else {
+      this.tail.next = node;
+      this.tail = node;
 
-//   peek() {
-//     return this.storage[this.storage.length - 1];
-//   }
+    }
+    this.count++;
+  }
 
-//   isEmpty() {
-//     return this.storage.length === 0;
-//   }
+  pop() {
+    var tmp = this.head;
 
-//   size() {
-//     return this.storage.length;
-//   }
-// }
+    this.head = this.head.next;
+    this.count--;
+    return tmp.value;
+  }
 
-// class Stack {
-//   constructor() {
-//     this.storage = [];
-//   }
+  peek() {
+    return this.tail.value;
+  }
 
-//   push(val) {
-//     this.storage.push(val);
-//   }
+  isEmpty() {
+    return this.count === 0;
+  }
 
-//   pop() {
-//     return this.storage.pop();
-//   }
-
-//   peek() {
-//     return this.storage[this.storage.length - 1];
-//   }
-
-//   isEmpty() {
-//     return this.storage.length === 0;
-//   }
-
-//   size() {
-//     return this.storage.length;
-//   }
-// }
-
-  // var pemdas = {
-  //   '*': 4,
-  //   '/': 3,
-  //   '+': 2,
-  //   '-': 1,
-  // };
+  size() {
+    return this.count;
+  }
+}
 
 var calculate = (s) => {
   s = s.replace(/\s/g, '');
@@ -69,55 +58,62 @@ var calculate = (s) => {
     else return a - b;
   }
 
-  var _nums = s.replace(/[-\*\+\/]/g, ' ').split(' ');
-  var _ops = s.replace(/[0-9]/g,  '').split('');
-  var nums = [];
-  var ops = [];
-  for (var i = 0; i < _ops.length; i++) {
-    ops.push('');
-    ops.push(_ops[i]);
-  }
-
-  for (var k = 0; k < _nums.length; k++) {
-    nums.push(_nums[k]);
-    nums.push('');
-  }
-  ops.push(nums.pop());
-  // console.log('nums', nums)
-  // console.log('ops ', ops)
-
-  while (nums.length > 1) {
-    for (var i = 0; i < ops.length - 1; i++) {
-      if (ops[i] === '*' || ops[i] === '/') {
-        nums.splice(i - 1, 3, doMath(nums[i - 1], nums[i + 1], ops[i]))
-        ops.splice(i - 1, 2)
-      }
-      // console.log(nums)
-    }
-
-   for (var i = 0; i < ops.length - 1; i++) {
-      if (ops[i] === '+' || ops[i] === '-') {
-        nums.splice(i - 1, 3, doMath(nums[i - 1], nums[i + 1], ops[i]))
-        ops.splice(i - 1, 2)
-      }
-      console.log(nums)
+  var nums = s.split(/[-\*\+\/]/g)
+  var ops = s.split(/[0-9]/g).filter(char => char);
+  var exp = [];
+  for (var i = 0; i < nums.length; i++) {
+    exp.push(nums[i]);
+    if (ops[i]) {
+      exp.push(ops[i]);
     }
   }
 
-  console.log('result: ', parseInt(nums.join('')));
-  return parseInt(nums.join(''));
+
+  var numsQue = new Queue();
+  var opsQue = new Queue();
+
+  for (var i = 0; i < exp.length; i += 2) {
+    if (exp[i + 1] === '+' || exp[i + 1] === '-') {
+      numsQue.push(exp[i]);
+      opsQue.push(exp[i + 1]);
+    } else if (i === exp.length - 1) {
+      numsQue.push(exp[i]);
+      break;
+    } else {
+      exp[i + 2] = doMath(exp[i], exp[i + 2], exp[i + 1]);
+    }
+  }
+
+  if (numsQue.size() === 1) {
+    var result = numsQue.pop()
+    return typeof result === 'string' ? parseInt(result) : result;
+  }
+
+  var a = numsQue.pop();
+  var b = numsQue.pop();
+
+
+  while (!numsQue.isEmpty()) {
+    a = doMath(a, b, opsQue.pop());
+    b = numsQue.pop();
+  }
+
+  a = doMath(a, b, opsQue.pop());
+  return a;
 
 };
 
-// console.log(calculate("3+2*2") === 7);
 // console.log(calculate(" 3/2 ") === 1);
+// console.log(calculate("14/3*2") === 8)
+// console.log(calculate('42') === 42)
+
+
+// console.log(calculate("3+2*2") === 7);
 // console.log(calculate(" 3+5 / 2 ") === 5);
 // console.log(calculate("12-3*4") === 0);
 // console.log(calculate('1 + 1') === 2);
 // console.log(calculate('2 + 6 / 3') === 4)
-// console.log(calculate('42') === 42)
 // console.log(calculate('0-2147483647') === -2147483647)
 // console.log(calculate('1+1+1') === 3)
 // console.log(calculate('1-1+1') === 1)
-// console.log(calculate("14/3*2") === 8)
-console.log(calculate("100-1-2-3-4-5-6-7-8-9-10") === 45)
+// console.log(calculate("100-1-2-3-4-5-6-7-8-9-10") === 45)
