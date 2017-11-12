@@ -1,75 +1,64 @@
 var lengthOfLongestSubstring = function(s) {
-  if (!s) return 0;
-  var maxStr = s[0];
-  var maxCount = 1;
-  var allSubs = {};
+  var maxCount = 0;
+  var count = 0;
+  var startIndex = 0;
+  var chars = {};
 
-  var i = 0;
-  while (i < s.length) {
-    var subObj = {};
-    var count = 0;
-
-    var subStr = '';
-
-    var rightIndex = i + 1;
-    var leftIndex = i;
-    var keepSearching = true;
-    while ((rightIndex < s.length || leftIndex >= 0) && keepSearching && !allSubs[subStr]) {
-      // console.log(leftIndex, rightIndex)
-
-      keepSearching = false;
-      var rightChar = s[rightIndex];
-      var leftChar = s[leftIndex];
-
-      while (leftChar && !subObj[leftChar]) { // build left
-        // console.log('left', leftChar)
-        subObj[leftChar] = 1;
-        subStr = leftChar.concat(subStr);
-        count++;
-        leftIndex--;
-        leftChar = s[leftIndex];
-        keepSearching = true;
-        allSubs[subStr] = 1;
-      }
-
-      while (rightChar && !subObj[rightChar]) { // build right
-        // console.log('rightChar', rightChar)
-        subObj[rightChar] = 1;
-        subStr += rightChar;
-        count++;
-        rightIndex++;
-        rightChar = s[rightIndex];
-        keepSearching = true;
-        allSubs[subStr] = 1;
-      }
-
-      // console.log('subStr', subStr);
-    }
-      // console.log(allSubs)
-
-    if (count > maxCount) {
-      maxCount = count;
-      maxStr = subStr;
-    }
-
-    if (i + maxCount < s.length - 1) {
-      console.log(i, count);
-      i += maxCount;
+  for (var i = 0; i < s.length; i++) {
+    var char = s[i];
+    if (!chars.hasOwnProperty(char)) {
+      chars[char] = i;
+      count++;
     } else {
-      // i = rightIndex;
-      i++;
+      var prevIndex = chars[char];
+      console.log('i', i);
+      console.log('dup', char);
+      console.log('chars before delete', chars);
+      // console.log(prevIndex)
+      // console.log('startIndex', startIndex)
+
+      if (startIndex === 0 && chars[char] === 0) {
+        delete chars[s[0]];
+      }
+      if (startIndex === 0 && chars[char] === 1) {
+        delete chars[s[0]];
+        delete chars[s[1]];
+      }
+      // delete chars[char];
+      for (var k = startIndex; k < prevIndex - 1; k++) {
+      // for (var k = 0; k < prevIndex - 1; k++) {
+        console.log('k', k)
+        // console.log('deleted char: ', s[k])
+        if (k === chars[s[k]]) delete chars[s[k]];
+      }
+
+      console.log('chars after delete', chars);
+      console.log('count', count);
+      // console.log('new count', i - prevIndex)
+      maxCount = maxCount > count ? maxCount : count;
+      count = i - prevIndex;
+      startIndex = prevIndex - 1; // update startIndex
+      chars[char] = i; // update the index of the char in chars
     }
   }
-  console.log('maxStr and maxCount', [maxStr, maxCount]);
-  return maxCount;
+  console.log('maxCount: ', maxCount);
+  console.log('last count: ', count);
+  return maxCount > count ? maxCount : count;
+
 };
 
-// console.log(lengthOfLongestSubstring("gehmbfqmozbpripibusbezagafqtypz") === 9)
-// console.log(lengthOfLongestSubstring("bziuwnklhqzrxnb") === 11) // 'iuwnklhqzrx'
-// console.log(lengthOfLongestSubstring('jbpnbwwd') === 4) // 'jbnp'
+module.exports = lengthOfLongestSubstring;
+
+console.log(lengthOfLongestSubstring("eeydgwdykpv") === 7)
+
+// console.log(lengthOfLongestSubstring("oiholrxmihbftoarawdazeoubedgtkpityygpvvafwfymgsmcvodbexd") === 11)
 // console.log(lengthOfLongestSubstring('abcabcbb') === 3); // 'abc'
+// console.log(lengthOfLongestSubstring("abba") === 2)
+// console.log(lengthOfLongestSubstring("bziuwnklhqzrxnb") === 11) // 'iuwnklhqzrx'
+// console.log(lengthOfLongestSubstring('zqqifzoupifnwyankayhjsuj') === 10);
+// console.log(lengthOfLongestSubstring("gehmbfqmozbpripibusbezagafqtypz") === 9) // 'fqmozbpri'
+// console.log(lengthOfLongestSubstring('ohvhjdml') === 6); // 'vhjdml'
+// console.log(lengthOfLongestSubstring('jbpnbwwd') === 4) // 'jbnp'
 // console.log(lengthOfLongestSubstring('bbbbb') === 1); // 'b'
 // console.log(lengthOfLongestSubstring('pwwkew') === 3); // 'wke'
 // console.log(lengthOfLongestSubstring('dvdf') === 3); // 'vdf'
-// console.log(lengthOfLongestSubstring('ohvhjdml') === 6); // 'vhjdml'
-console.log(lengthOfLongestSubstring('zqqifzoupifnwyankayhjsuj') === 10);
