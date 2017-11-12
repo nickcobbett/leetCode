@@ -10,11 +10,11 @@ var lengthOfLongestSubstring = function(s) {
       chars[char] = i;
       count++;
     } else {
-      var prevIndex = chars[char];
-      console.log('i', i);
-      console.log('dup', char);
-      console.log('chars before delete', chars);
-      // console.log(prevIndex)
+      var newStrIndex = chars[char];
+      // console.log('i', i);
+      // console.log('dup', char);
+      // console.log('chars before delete', chars);
+      // console.log(newStrIndex)
       // console.log('startIndex', startIndex)
 
       if (startIndex === 0 && chars[char] === 0) {
@@ -25,34 +25,36 @@ var lengthOfLongestSubstring = function(s) {
         delete chars[s[1]];
       }
       // delete chars[char];
-      for (var k = startIndex; k < prevIndex - 1; k++) {
-      // for (var k = 0; k < prevIndex - 1; k++) {
-        console.log('k', k)
+      for (var k = startIndex; k < newStrIndex; k++) {
+      // for (var k = 0; k < newStrIndex - 1; k++) {
+        // console.log('k', k)
         // console.log('deleted char: ', s[k])
-        if (k === chars[s[k]]) delete chars[s[k]];
+        if (k === chars[s[k]]) {
+          delete chars[s[k]];
+        }
       }
 
-      console.log('chars after delete', chars);
-      console.log('count', count);
-      // console.log('new count', i - prevIndex)
+      // console.log('chars after delete', chars);
+      // console.log('count', count);
+      // console.log('new count', i - newStrIndex)
       maxCount = maxCount > count ? maxCount : count;
-      count = i - prevIndex;
-      startIndex = prevIndex - 1; // update startIndex
+      count = i - newStrIndex;
+      startIndex = newStrIndex - 1; // update startIndex
       chars[char] = i; // update the index of the char in chars
     }
   }
-  console.log('maxCount: ', maxCount);
-  console.log('last count: ', count);
+  // console.log('maxCount: ', maxCount);
+  // console.log('last count: ', count);
   return maxCount > count ? maxCount : count;
 
 };
 
 module.exports = lengthOfLongestSubstring;
 
-console.log(lengthOfLongestSubstring("eeydgwdykpv") === 7)
-
-// console.log(lengthOfLongestSubstring("oiholrxmihbftoarawdazeoubedgtkpityygpvvafwfymgsmcvodbexd") === 11)
 // console.log(lengthOfLongestSubstring('abcabcbb') === 3); // 'abc'
+console.log(lengthOfLongestSubstring("oiholrxmihbftoarawdazeoubedgtkpityygpvvafwfymgsmcvodbexd") === 11)
+
+// console.log(lengthOfLongestSubstring("eeydgwdykpv") === 7)
 // console.log(lengthOfLongestSubstring("abba") === 2)
 // console.log(lengthOfLongestSubstring("bziuwnklhqzrxnb") === 11) // 'iuwnklhqzrx'
 // console.log(lengthOfLongestSubstring('zqqifzoupifnwyankayhjsuj') === 10);
