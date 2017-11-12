@@ -1,4 +1,4 @@
-  var lengthOfLongestSubstring = function(s) {
+var lengthOfLongestSubstring = function(s) {
   var maxCount = 0;
   var count = 0;
   var startIndex = 0;
