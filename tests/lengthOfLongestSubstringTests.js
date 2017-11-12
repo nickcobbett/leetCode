@@ -1,6 +1,6 @@
 var chai = require('chai');
 var expect = chai.expect;
-var lengthOfLongestSubstring = require('./lengthOfLongestSubstring.js');
+var lengthOfLongestSubstring = require('../problems/lengthOfLongestSubstring.js');
 
 
 describe("lengthOfLongestSubstring", function() {

@@ -1,6 +1,6 @@
 var chai = require('chai');
 
-var waterTrap = require('./waterTrap.js').trap;
+var waterTrap = require('../problems/waterTrap.js').trap;
 
 var assert = chai.assert;
 
