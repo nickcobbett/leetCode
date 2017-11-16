@@ -106,28 +106,13 @@ class Board {
   }
 }
 
-var _has = function(obj, key) {
-  return obj != null && hasOwnProperty.call(obj, key);
-};
-
-// Memoize an expensive function by storing its results.
-var _memoize = function(func, hasher) {
-  var memoize = function(key) {
-    var cache = memoize.cache;
-    var address = '' + (hasher ? hasher.apply(this, arguments) : key);
-    if (!_has(cache, address)) cache[address] = func.apply(this, arguments);
-    return cache[address];
-  };
-  memoize.cache = {};
-  return memoize;
-};
-
-
 var solveNQueens = function(n) {
   var boards = [];
   var boardsHash = {};
+  var memo = {};
 
   var fillBoard = (board) => {
+
     if (!board) {
       board = new Board(n);
     }
@@ -139,10 +124,13 @@ var solveNQueens = function(n) {
       }
       return;
     } else if (board.hasOpenCells()) {
-
       for (var i = 0; i < n; i++) {
         for (var j = 0; j < n; j++) {
-          fillBoard(new Board(n, board.getState()).placeNextQueen(i, j));
+          var key = `${JSON.stringify(board.getBoard())}-${i}-${j}`;
+          if (!memo[key]) {
+            fillBoard(new Board(n, board.getState()).placeNextQueen(i, j));
+            memo[key] = 1;
+          }
         }
       }
     } else {
