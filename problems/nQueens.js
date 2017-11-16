@@ -48,25 +48,23 @@ class Board {
     }
     return true;
   }
+  _placeQueen(row, col) {
+    delete this.rows[row];
+    delete this.cols[col];
+    this.matrix[row][col] = 'Q';
+    this.queens.push([row, col]);
+    this.nQueens++;
+    return this;
+  }
 
   placeNextQueen(tryRow, tryCol) {
     if ((tryRow !== undefined && tryCol !== undefined) && this.rows[tryRow] && this.cols[tryCol] && this.checkDiagonal(tryRow, tryCol)) {
-      delete this.rows[tryRow];
-      delete this.cols[tryCol];
-      this.matrix[tryRow][tryCol] = 'Q';
-      this.queens.push([tryRow, tryCol]);
-      this.nQueens++;
-      return this;
+      return this._placeQueen(tryRow, tryCol);
     } else {
       for (var row in this.rows) {
         for (var col in this.cols) {
-          if (this.rows[row] && this.cols[col] && this.checkDiagonal(row, col)) { // if
-            delete this.rows[row];
-            delete this.cols[col];
-            this.matrix[row][col] = 'Q';
-            this.queens.push([row, col]);
-            this.nQueens++;
-            return this;
+          if (this.rows[row] && this.cols[col] && this.checkDiagonal(row, col)) {
+            return this._placeQueen(row, col);
           }
         }
       }
@@ -124,12 +122,23 @@ var solveNQueens = function(n) {
       }
       return;
     } else if (board.hasOpenCells()) {
-      for (var i = 0; i < n; i++) {
-        for (var j = 0; j < n; j++) {
-          var key = `${JSON.stringify(board.getBoard())}-${i}-${j}`;
-          if (!memo[key]) {
-            fillBoard(new Board(n, board.getState()).placeNextQueen(i, j));
-            memo[key] = 1;
+      // for (var i = 0; i < n; i++) {
+      //   for (var j = 0; j < n; j++) {
+      //     var key = `${JSON.stringify(board.getBoard())}-${i}-${j}`;
+      //     if (!memo[key]) {
+      //       memo[key] = 1;
+      //       fillBoard(new Board(n, board.getState()).placeNextQueen(i, j));
+      //     }
+      //   }
+      // }
+      for (var row in board.rows) {
+        for (var col in board.cols) {
+          if (board.rows[row] && board.cols[col] && board.checkDiagonal(row, col)) {
+            var key = `${JSON.stringify(board.getBoard())}-${row}-${col}`;
+            if (!memo[key]) {
+              memo[key] = 1;
+              fillBoard(new Board(n, board.getState()).placeNextQueen(row, col));
+            }
           }
         }
       }
@@ -141,12 +150,12 @@ var solveNQueens = function(n) {
 
   fillBoard();
 
-  console.log('boards: ', boards);
+  // console.log('boards: ', boards);
   // console.log('# boards', boards.length);
   return boards;
 };
 
-solveNQueens(5);
+solveNQueens(7);
 
 //board testing
   // var state = {
