@@ -4,11 +4,10 @@
  */
 class Board {
   constructor(n, state) {
-    this.matrix = new Array(n).fill([]).map(arr => new Array(n).fill('.'));
     this.rows = {};
     this.cols = {};
     this.queens = [];
-    this.nQueens = 0;
+    // this.queens = {};
     this.size = n;
     this.initialize(n, state);
   }
@@ -23,11 +22,6 @@ class Board {
       this.rows = Object.assign({}, state.rows);
       this.cols = Object.assign({}, state.cols);
       this.queens = [...state.queens];
-      this.nQueens = state.nQueens;
-
-      this.queens.forEach(queen => {
-        this.matrix[queen[0]][queen[1]] = 'Q'
-      })
     }
   }
 
@@ -35,8 +29,7 @@ class Board {
     return {
       rows: this.rows,
       cols: this.cols,
-      queens: [...this.queens],
-      nQueens: this.nQueens
+      queens: this.queens
     }
   }
 
@@ -48,23 +41,22 @@ class Board {
     }
     return true;
   }
-  _placeQueen(row, col) {
-    delete this.rows[row];
-    delete this.cols[col];
-    this.matrix[row][col] = 'Q';
-    this.queens.push([row, col]);
-    this.nQueens++;
-    return this;
-  }
 
   placeNextQueen(tryRow, tryCol) {
+    var _placeQueen = (row, col) => {
+      delete this.rows[row];
+      delete this.cols[col];
+      this.queens.push([row, col]);
+      return this;
+    };
+
     if ((tryRow !== undefined && tryCol !== undefined) && this.rows[tryRow] && this.cols[tryCol] && this.checkDiagonal(tryRow, tryCol)) {
-      return this._placeQueen(tryRow, tryCol);
+      return _placeQueen(tryRow, tryCol);
     } else {
       for (var row in this.rows) {
         for (var col in this.cols) {
           if (this.rows[row] && this.cols[col] && this.checkDiagonal(row, col)) {
-            return this._placeQueen(row, col);
+            return _placeQueen(row, col);
           }
         }
       }
@@ -72,24 +64,25 @@ class Board {
     return false;
   }
 
-  getNQueens() {
-    return this.nQueens;
-  }
-
-  getBoard() {
-    return this.matrix.map(row => row.join(''));
+  getQueens() {
+    this.queens.sort((a, b) => {
+      if (a[0] < b[0]) return -1;
+      if (a[0] > b[0]) return 1;
+      if (a[1] < b[1]) return -1;
+      if (a[1] > b[1]) return -1;
+      return 0;
+    });
+    return this.queens;
   }
 
   hasOpenCells() {
     for (var row in this.rows) {
       if (!Object.prototype.hasOwnProperty.call(this.rows, row)) {
-        console.log('fails rows')
         return false;
       }
     }
     for (var col in this.cols) {
       if (!Object.prototype.hasOwnProperty.call(this.cols, col)) {
-        console.log('fails cols')
         return false;
       }
     }
@@ -105,7 +98,6 @@ class Board {
 }
 
 var solveNQueens = function(n) {
-  var boards = [];
   var boardsHash = {};
   var memo = {};
 
@@ -115,26 +107,16 @@ var solveNQueens = function(n) {
       board = new Board(n);
     }
 
-    if (board.getNQueens() === n) {
-      if (!boardsHash[JSON.stringify(board.getBoard())]) {
-        boards.push(board.getBoard());
-        boardsHash[JSON.stringify(board.getBoard())] = 1;
+    if (board.queens.length === n) {
+      if (!boardsHash[JSON.stringify(board.getQueens())]) {
+        boardsHash[JSON.stringify(board.queens)] = 1;
       }
       return;
     } else if (board.hasOpenCells()) {
-      // for (var i = 0; i < n; i++) {
-      //   for (var j = 0; j < n; j++) {
-      //     var key = `${JSON.stringify(board.getBoard())}-${i}-${j}`;
-      //     if (!memo[key]) {
-      //       memo[key] = 1;
-      //       fillBoard(new Board(n, board.getState()).placeNextQueen(i, j));
-      //     }
-      //   }
-      // }
       for (var row in board.rows) {
         for (var col in board.cols) {
           if (board.rows[row] && board.cols[col] && board.checkDiagonal(row, col)) {
-            var key = `${JSON.stringify(board.getBoard())}-${row}-${col}`;
+            var key = `${JSON.stringify(board.getQueens())}-${row}-${col}`;
             if (!memo[key]) {
               memo[key] = 1;
               fillBoard(new Board(n, board.getState()).placeNextQueen(row, col));
@@ -145,17 +127,34 @@ var solveNQueens = function(n) {
     } else {
       return;
     }
-
   }
 
   fillBoard();
 
-  // console.log('boards: ', boards);
-  // console.log('# boards', boards.length);
-  return boards;
+  // console.log('boardsHash', boardsHash);
+  var formatBoards = (queenCoords) => {
+    var boards = [];
+    for (var queens in queenCoords) {
+      queens = JSON.parse(queens);
+      var board = new Array(n).fill([]).map(arr => new Array(n).fill('.'));
+      queens.forEach(queen => board[queen[0]][queen[1]] = 'Q');
+      boards.push(board.map(row => row.join('')));
+    }
+    return boards;
+  }
+
+  return formatBoards(boardsHash);
 };
 
-solveNQueens(7);
+console.log(solveNQueens(6));
+
+      // if (!boardsHash[JSON.stringify(board.getBoard())]) {
+      //   boards.push(board.getBoard());
+      //   boardsHash[JSON.stringify(board.getBoard())] = 1;
+      // }
+
+
+
 
 //board testing
   // var state = {
@@ -227,12 +226,3 @@ solveNQueens(7);
 // console.log(fiveQueensExpected.every(board => JSON.stringify(solveNQueens(5)).includes(JSON.stringify(board))))
 // var fiveNBoardsMissing = fiveQueensExpected.filter(board => !JSON.stringify(fiveQueensActual).includes(JSON.stringify(board)))
 // console.log(fiveNBoardsMissing)
-
-
-
-
-  // var fillBoard = (board, row, col, visited) => {
-  //   // place queens in a board
-  //   // have a matrix of all cells
-  //   // call this function for each cell. each time you add a queen you add that to the visited and you make that visited cell unavailable the first time it's attempted to be visited
-  // }
